@@ -240,3 +240,63 @@ print(results_df.to_string(index=False))
 
 best = results_df.loc[results_df['F1'].idxmax()]
 print(f"\nbest C={best['C']}, max_iter={best['max_iter']}, F1={best['F1']}")
+# ==========================================
+# Decision Tree Evaluation
+# ==========================================
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+decision_tree_model = DecisionTreeClassifier(criterion="entropy", random_state=42)
+decision_tree_model.fit(X_train_scaled, y_train)
+y_predicted_by_decision_tree = decision_tree_model.predict(X_test_scaled)
+accuracy_of_decision_tree = accuracy_score(y_test, y_predicted_by_decision_tree)
+
+print("Accuracy of decision tree model:", accuracy_of_decision_tree)
+
+# ==========================================
+# SVM Model Evaluation with Grid Search
+# ==========================================
+from sklearn.svm import SVC
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import accuracy_score, confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+plt.style.use('dark_background')
+
+param_grid = {
+    'C': [0.1, 1, 10, 100],
+    'kernel': ['linear', 'rbf', 'poly'],
+    'gamma': ['scale', 'auto']
+}
+
+svm_base = SVC(random_state=42)
+svm_grid = GridSearchCV(estimator=svm_base, param_grid=param_grid, cv=5, scoring='accuracy', n_jobs=-1)
+
+svm_grid.fit(X_train_scaled, y_train)
+y_pred_grid_search_svm = svm_grid.predict(X_test_scaled)
+accuracy_of_grid_search_svm = accuracy_score(y_test, y_pred_grid_search_svm)
+best_svm = svm_grid.best_estimator_
+
+print("--- SVM Model Evaluation ---")
+print("Best Hyperparameters Found:", svm_grid.best_params_)
+print("Best Cross-Validation Accuracy: ", f"{accuracy_of_grid_search_svm:.3f}")
+
+cm = confusion_matrix(y_test, y_pred_grid_search_svm, labels=best_svm.classes_)
+
+group_names = ['True Negative', 'False Positive', 'False Negative', 'True Positive']
+group_counts = [str(value) for value in cm.flatten()]
+
+labels = [f"{v1}\n{v2}" for v1, v2 in zip(group_names, group_counts)]
+labels = np.asarray(labels).reshape(2, 2)
+
+fig, ax = plt.subplots(figsize=(6, 6))
+sns.heatmap(cm, annot=labels, fmt='', cmap='viridis', cbar=False, 
+            xticklabels=best_svm.classes_, yticklabels=best_svm.classes_, 
+            ax=ax, annot_kws={"size": 12, "weight": "bold"})
+
+plt.title("SVM Confusion Matrix with Grid Search", pad=15, fontsize=14, fontweight='bold')
+plt.xlabel('Predicted Label', fontsize=12)
+plt.ylabel('True Label', fontsize=12)
+plt.show()
