@@ -1,214 +1,29 @@
-import './App.css'
+import '../App.css'
 function Header() {
-    const pickModel = (_element: any) => {
-        console.log("Model picked");
-    };
+    // const pickModel = (_element: any) => {
+    //     console.log("Model picked");
+    // };
 
-    const toggleRadio = (_element: any, group: string) => {
-        console.log("Radio toggled in group:", group);
-    };
+    // const toggleRadio = (_element: any, group: string) => {
+    //     console.log("Radio toggled in group:", group);
+    // };
 
-    const runPred = () => {
-        console.log("Running prediction");
-    };
+    // const runPred = () => {
+    //     console.log("Running prediction");
+    // };
     return (
         <header>
-
-            <div className="shell">
-                <div className="topbar">
-                    <div className="brand">
-                        <div className="brand-dot"></div>
-                        <div>
-                            <div className="brand-name">CardioPredict</div>
-                            <div className="brand-sub">heart disease prediction</div>
-                        </div>
-                    </div>
-                    <div className="api-status">
-                        <div className="api-dot"></div>
-                        FastAPI · /predict
+            <div className="topbar">
+                <div className="brand">
+                    <div className="brand-dot"></div>
+                    <div>
+                        <div className="brand-name">CardioPredict</div>
+                        <div className="brand-sub">heart disease prediction</div>
                     </div>
                 </div>
-
-                <div className="body">
-
-                    <div className="model-strip">
-                        <div className="model-card active" data-key="svm" onClick={() => pickModel(this)}>
-                            <div className="model-card-name">SVM</div>
-                            <div className="model-card-type">support vector</div>
-                            <div className="model-card-acc">85%</div>
-                            <div className="model-card-acc-lbl">ACCURACY</div>
-                        </div>
-                        <div className="model-card" data-key="dt" onClick={() => pickModel(this)}>
-                            <div className="model-card-name">Decision Tree</div>
-                            <div className="model-card-type">tree-based</div>
-                            <div className="model-card-acc">80%</div>
-                            <div className="model-card-acc-lbl">ACCURACY</div>
-                        </div>
-                        <div className="model-card" data-key="lr" onClick={() => pickModel(this)}>
-                            <div className="model-card-name">Logistic Reg.</div>
-                            <div className="model-card-type">linear</div>
-                            <div className="model-card-acc">82%</div>
-                            <div className="model-card-acc-lbl">ACCURACY</div>
-                        </div>
-                    </div>
-
-                    <div className="form-section">
-                        <div className="form-section-header">
-                            <div className="step-num">1</div>
-                            <div className="form-section-title">Patient demographics</div>
-                        </div>
-                        <div className="form-section-body">
-                            <div className="field-row">
-                                <div className="field">
-                                    <label>AGE</label>
-                                    <input type="number" placeholder="e.g. 54" min="1" max="120" />
-                                </div>
-                                <div className="field">
-                                    <label>GENDER</label>
-                                    <div className="radio-group">
-                                        <div className="radio-opt sel" onClick={() => toggleRadio(this, 'gender')}>Male</div>
-                                        <div className="radio-opt" onClick={() => toggleRadio(this, 'gender')}>Female</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="field">
-                                <label>WORK TYPE</label>
-                                <div className="select-wrap">
-                                    <select>
-                                        <option value="">Select work type</option>
-                                        <option>Private</option>
-                                        <option>Self-employed</option>
-                                        <option>Government job</option>
-                                        <option>Children</option>
-                                        <option>Never worked</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="field">
-                                <label>SMOKING STATUS</label>
-                                <div className="radio-group">
-                                    <div className="radio-opt sel" onClick={() => toggleRadio(this, 'smoke')}>Never smoked</div>
-                                    <div className="radio-opt" onClick={() => toggleRadio(this, 'smoke')}>Formerly smoked</div>
-                                    <div className="radio-opt" onClick={() => toggleRadio(this, 'smoke')}>Smokes</div>
-                                    <div className="radio-opt" onClick={() => toggleRadio(this, 'smoke')}>Unknown</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="form-section">
-                        <div className="form-section-header">
-                            <div className="step-num">2</div>
-                            <div className="form-section-title">Clinical measurements</div>
-                        </div>
-                        <div className="form-section-body">
-                            <div className="field-row three">
-                                <div className="field">
-                                    <label>BLOOD PRESSURE</label>
-                                    <input type="number" placeholder="mmHg" />
-                                </div>
-                                <div className="field">
-                                    <label>CHOLESTEROL</label>
-                                    <input type="number" placeholder="mg/dL" />
-                                </div>
-                                <div className="field">
-                                    <label>MAX HEART RATE</label>
-                                    <input type="number" placeholder="bpm" />
-                                </div>
-                            </div>
-                            <div className="field-row">
-                                <div className="field">
-                                    <label>ST DEPRESSION</label>
-                                    <input type="number" placeholder="0.0" step="0.1" />
-                                </div>
-                                <div className="field">
-                                    <label>FASTING BLOOD SUGAR</label>
-                                    <div className="radio-group">
-                                        <div className="radio-opt sel" onClick={() => toggleRadio(this, 'fbs')}>Normal</div>
-                                        <div className="radio-opt" onClick={() => toggleRadio(this, 'fbs')}>&gt;120 mg/dL</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button className="run-btn" onClick={() => runPred()}>RUN PREDICTION</button>
-
-                    <div className="result-panel" id="resultPanel">
-                        <div className="result-hero">
-                            <div>
-                                <div className="risk-badge low" id="riskBadge">LOW RISK</div>
-                                <div className="result-main-val low" id="riskVal" style={{ 'marginTop': '10px' }}>No Disease</div>
-                                <div className="result-sub" id="riskSub">Prediction by SVM — joblib model</div>
-                            </div>
-                            <div className="conf-section">
-                                <div className="conf-val" id="confVal">72%</div>
-                                <div className="conf-lbl">CONFIDENCE</div>
-                                <div className="conf-track"><div className="conf-fill" id="confFill" style={{ 'width': '72%' }}></div></div>
-                            </div>
-                        </div>
-                        <div className="metrics-bar">
-                            <div className="metric-cell"><div className="metric-cell-val" id="mAcc">85%</div><div className="metric-cell-lbl">ACCURACY</div></div>
-                            <div className="metric-cell"><div className="metric-cell-val" id="mPrec">83%</div><div className="metric-cell-lbl">PRECISION</div></div>
-                            <div className="metric-cell"><div className="metric-cell-val" id="mRec">87%</div><div className="metric-cell-lbl">RECALL</div></div>
-                            <div className="metric-cell"><div className="metric-cell-val" id="mF1">0.85</div><div className="metric-cell-lbl">F1 SCORE</div></div>
-                        </div>
-                    </div>
-
-                    <div className="plots-row">
-                        <div className="plot-card">
-                            <div className="plot-title">FEATURE IMPORTANCE</div>
-                            <div className="feat-row"><div className="feat-lbl">Chest pain</div><div className="feat-track"><div className="feat-fill" style={{ 'width': '90%' }}></div></div><div className="feat-val">0.90</div></div>
-                            <div className="feat-row"><div className="feat-lbl">Max HR</div><div className="feat-track"><div className="feat-fill" style={{ 'width': '74%' }}></div></div><div className="feat-val">0.74</div></div>
-                            <div className="feat-row"><div className="feat-lbl">ST depress.</div><div className="feat-track"><div className="feat-fill" style={{ 'width': '66%' }}></div></div><div className="feat-val">0.66</div></div>
-                            <div className="feat-row"><div className="feat-lbl">Cholesterol</div><div className="feat-track"><div className="feat-fill" style={{ 'width': '51%' }}></div></div><div className="feat-val">0.51</div></div>
-                            <div className="feat-row"><div className="feat-lbl">Age</div><div className="feat-track"><div className="feat-fill" style={{ 'width': '44%' }}></div></div><div className="feat-val">0.44</div></div>
-                            <div className="feat-row"><div className="feat-lbl">BP</div><div className="feat-track"><div className="feat-fill" style={{ 'width': '35%' }}></div></div><div className="feat-val">0.35</div></div>
-                            <div className="feat-row"><div className="feat-lbl">Smoking</div><div className="feat-track"><div className="feat-fill" style={{ 'width': '28%' }}></div></div><div className="feat-val">0.28</div></div>
-                        </div>
-
-                        <div className="plot-card">
-                            <div className="plot-title">CONFUSION MATRIX</div>
-                            <div className="cm-labels-row">
-                                <div className="cm-col-lbl">PRED NO</div>
-                                <div className="cm-col-lbl">PRED YES</div>
-                            </div>
-                            <div style={{ 'display': 'flex', 'flexDirection': 'column', 'gap': '4px' }}>
-                                <div className="cm-row">
-                                    <div className="cm-row-lbl">ACTUAL NO</div>
-                                    <div className="cm-cell tn" id="cm-tn">142</div>
-                                    <div className="cm-cell fp" id="cm-fp">18</div>
-                                </div>
-                                <div className="cm-row">
-                                    <div className="cm-row-lbl">ACTUAL YES</div>
-                                    <div className="cm-cell fn" id="cm-fn">21</div>
-                                    <div className="cm-cell tp" id="cm-tp">137</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="dataset-card">
-                        <div className="dataset-header">
-                            <div className="dataset-title">df.head() — train_data.csv</div>
-                            <div className="dataset-badge">5 rows shown</div>
-                        </div>
-                        <table className="dataset-table">
-                            <thead>
-                                <tr>
-                                    <th>Age</th><th>Gender</th><th>BP</th><th>Cholesterol</th><th>Max HR</th><th>Smoking</th><th>Heart Disease</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>67</td><td>Male</td><td>160</td><td>286</td><td>108</td><td>Never smoked</td><td><span className="target-yes">Yes</span></td></tr>
-                                <tr><td>52</td><td>Male</td><td>112</td><td>230</td><td>160</td><td>Formerly smoked</td><td><span className="target-no">No</span></td></tr>
-                                <tr><td>63</td><td>Female</td><td>130</td><td>254</td><td>147</td><td>Smokes</td><td><span className="target-yes">Yes</span></td></tr>
-                                <tr><td>47</td><td>Male</td><td>108</td><td>243</td><td>152</td><td>Never smoked</td><td><span className="target-no">No</span></td></tr>
-                                <tr><td>55</td><td>Female</td><td>135</td><td>217</td><td>165</td><td>Unknown</td><td><span className="target-no">No</span></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-
+                <div className="api-status">
+                    <div className="api-dot"></div>
+                    FastAPI · /predict
                 </div>
             </div>
         </header>
