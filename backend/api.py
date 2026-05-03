@@ -46,4 +46,4 @@ async def health():
 
 @app.get("/models")
 async def get_models():
-    return {"models": ["logistic", "tree", "svm"]}
+    return {"models": ["logistic", "tree", "svm","random_forest", "knn", "gboost"]}

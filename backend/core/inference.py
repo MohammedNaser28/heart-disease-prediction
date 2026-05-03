@@ -19,7 +19,10 @@ def load_artifacts():
         MODELS["logistic"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'logistic_regression.pkl'))
         MODELS["tree"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'decision_tree.pkl'))
         MODELS["svm"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'svm_model.pkl'))
-        
+        MODELS["random_forest"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'random_forest.pkl'))
+        MODELS["knn"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'knn_model.pkl'))
+        MODELS["gboost"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'gb_model.pkl'))
+
         SCALER = joblib.load(os.path.join(ASSETS_DIR, 'models', 'scaler.pkl'))
         print("✅ Models and Scaler successfully loaded into memory!")
     except FileNotFoundError as e:

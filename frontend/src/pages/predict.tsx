@@ -27,104 +27,122 @@ const validationSchema = Yup.object().shape({
 });
 
 export function PredictPage() {
-  const [prediction, setPrediction] = useState<any>(null);
+    const [prediction, setPrediction] = useState<any>(null);
 
-  const initialValues = {
-    model: 'svm',
-    age: '',
-    gender: '',
-    workType: '',
-    smokingStatus: '',
-    bp: '',
-    cholesterol: '',
-    maxHr: '',
-    stDepression: '',
-    fbs: '',
-    chestPainType: '',
-    ekgResults: '',
-    exerciseAngina: '',
-    slopeOfSt: '',
-    numVesselsFluro: '',
-    thallium: ''
-  };
+    const initialValues = {
+        model: 'svm',
+        age: '',
+        gender: '',
+        workType: '',
+        smokingStatus: '',
+        bp: '',
+        cholesterol: '',
+        maxHr: '',
+        stDepression: '',
+        fbs: '',
+        chestPainType: '',
+        ekgResults: '',
+        exerciseAngina: '',
+        slopeOfSt: '',
+        numVesselsFluro: '',
+        thallium: ''
+    };
 
-  const handleSubmit = async (values: any) => {
-    try {
-        const response = await axios.post('http://localhost:8000/predict', values);
-        setPrediction(response.data);
-    } catch (error) {
-        console.error("Error running prediction", error);
-    }
-  };
+    const handleSubmit = async (values: any) => {
+        try {
+            const response = await axios.post('http://localhost:8000/predict', values);
+            setPrediction(response.data);
+        } catch (error) {
+            console.error("Error running prediction", error);
+        }
+    };
 
-  return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-    >
-      {({ values, setFieldValue }) => (
-        <Form className="body">
-          <div className="model-strip">
-              <div className={`model-card ${values.model === 'svm' ? 'active' : ''}`} onClick={() => setFieldValue('model', 'svm')}>
-                  <div className="model-card-name">SVM</div>
-                  <div className="model-card-type">support vector</div>
-                  <div className="model-card-acc">85%</div>
-                  <div className="model-card-acc-lbl">ACCURACY</div>
-              </div>
-              <div className={`model-card ${values.model === 'tree' ? 'active' : ''}`} onClick={() => setFieldValue('model', 'tree')}>
-                  <div className="model-card-name">Decision Tree</div>
-                  <div className="model-card-type">tree-based</div>
-                  <div className="model-card-acc">80%</div>
-                  <div className="model-card-acc-lbl">ACCURACY</div>
-              </div>
-              <div className={`model-card ${values.model === 'logistic' ? 'active' : ''}`} onClick={() => setFieldValue('model', 'logistic')}>
-                  <div className="model-card-name">Logistic Reg.</div>
-                  <div className="model-card-type">linear</div>
-                  <div className="model-card-acc">82%</div>
-                  <div className="model-card-acc-lbl">ACCURACY</div>
-              </div>
-          </div>
-
-          <PatientInputs />
-          <ClinicalInputs />
-          
-          <RunButton type="submit">RUN PREDICTION</RunButton>
-
-            {prediction && (
-                <div className={`result-panel ${prediction.prediction === 1 ? 'high-risk' : 'low-risk'}`}>
-                    <div className="result-header">
-                        <div className="result-icon">
-                            {prediction.prediction === 1 ? '⚠️' : '✅'}
+    return (
+        <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+        >
+            {({ values, setFieldValue }) => (
+                <Form className="body">
+                    <div className="model-strip">
+                        <div className={`model-card ${values.model === 'svm' ? 'active' : ''}`} onClick={() => setFieldValue('model', 'svm')}>
+                            <div className="model-card-name">SVM</div>
+                            <div className="model-card-type">support vector</div>
+                            <div className="model-card-acc">80.4%</div>
+                            <div className="model-card-acc-lbl">ACCURACY</div>
                         </div>
-                        <div className="result-title">
-                            {prediction.prediction === 1 ? 'HIGH RISK DETECTED' : 'LOW RISK'}
+                        <div className={`model-card ${values.model === 'tree' ? 'active' : ''}`} onClick={() => setFieldValue('model', 'tree')}>
+                            <div className="model-card-name">Decision Tree</div>
+                            <div className="model-card-type">tree-based</div>
+                            <div className="model-card-acc">80.3%</div>
+                            <div className="model-card-acc-lbl">ACCURACY</div>
+                        </div>
+                        <div className={`model-card ${values.model === 'logistic' ? 'active' : ''}`} onClick={() => setFieldValue('model', 'logistic')}>
+                            <div className="model-card-name">Logistic Reg.</div>
+                            <div className="model-card-type">linear</div>
+                            <div className="model-card-acc">87.5%</div>
+                            <div className="model-card-acc-lbl">ACCURACY</div>
+                        </div>
+                        <div className={`model-card ${values.model === 'gboost' ? 'active' : ''}`} onClick={() => setFieldValue('model', 'gboost')}>
+                            <div className="model-card-name">Gradient Boosting.</div>
+                            <div className="model-card-type">ensemble</div>
+                            <div className="model-card-acc">85.7%</div>
+                            <div className="model-card-acc-lbl">ACCURACY</div>
+                        </div>
+                        <div className={`model-card ${values.model === 'knn' ? 'active' : ''}`} onClick={() => setFieldValue('model', 'knn')}>
+                            <div className="model-card-name">KNN.</div>
+                            <div className="model-card-type">distance-based</div>
+                            <div className="model-card-acc">87.5%</div>
+                            <div className="model-card-acc-lbl">ACCURACY</div>
+                        </div>
+                        <div className={`model-card ${values.model === 'random_forest' ? 'active' : ''}`} onClick={() => setFieldValue('model', 'random_forest')}>
+                            <div className="model-card-name">Random Forest</div>
+                            <div className="model-card-type">tree-based</div>
+                            <div className="model-card-acc">87.5%</div>
+                            <div className="model-card-acc-lbl">ACCURACY</div>
                         </div>
                     </div>
-                    <div className="result-body">
-                        {prediction.probability !== null ? (
-                            <div className="prob-container">
-                                <div className="prob-label">
-                                    <span>Confidence Score</span>
-                                    <span>{(prediction.probability * 100).toFixed(1)}%</span>
+
+                    <PatientInputs />
+                    <ClinicalInputs />
+
+                    <RunButton type="submit">RUN PREDICTION</RunButton>
+
+                    {prediction && (
+                        <div className={`result-panel ${prediction.prediction === 1 ? 'high-risk' : 'low-risk'}`}>
+                            <div className="result-header">
+                                <div className="result-icon">
+                                    {prediction.prediction === 1 ? '⚠️' : '✅'}
                                 </div>
-                                <div className="prob-bar-bg">
-                                    <div 
-                                        className="prob-bar-fill" 
-                                        style={{ width: `${prediction.probability * 100}%` }}
-                                    ></div>
+                                <div className="result-title">
+                                    {prediction.prediction === 1 ? 'HIGH RISK DETECTED' : 'LOW RISK'}
                                 </div>
                             </div>
-                        ) : (
-                            <div className="prob-null">
-                                <em>SVM model provides binary classification without probability scores.</em>
+                            <div className="result-body">
+                                {prediction.probability !== null ? (
+                                    <div className="prob-container">
+                                        <div className="prob-label">
+                                            <span>Confidence Score</span>
+                                            <span>{(prediction.probability * 100).toFixed(1)}%</span>
+                                        </div>
+                                        <div className="prob-bar-bg">
+                                            <div
+                                                className="prob-bar-fill"
+                                                style={{ width: `${prediction.probability * 100}%` }}
+                                            ></div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="prob-null">
+                                        <em>SVM model provides binary classification without probability scores.</em>
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
-                </div>
+                        </div>
+                    )}
+                </Form>
             )}
-        </Form>
-      )}
-    </Formik>
-  );
+        </Formik>
+    );
 }
