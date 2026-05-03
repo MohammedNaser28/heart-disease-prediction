@@ -1,75 +1,49 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os
 from core.processing import prepare_patient_data
-import joblib
-import pandas as pd
+from core.inference import load_artifacts, run_prediction
 
 app = FastAPI()
 
-#TODO: make api To predict the heart disease
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Adjust in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+GRAPHS_DIR = os.path.join(BASE_DIR, "assets", "graphs")
+
+# Mount the graphs directory so the React app can load images directly via HTTP
+app.mount("/graphs", StaticFiles(directory=GRAPHS_DIR), name="graphs")
+
+@app.on_event("startup")
+async def startup_event():
+    load_artifacts()
+
 @app.post("/predict")
 async def predict_heart_disease(patient_json: dict):
-    pass
-
-
-
-
+    try:
+        model_type = patient_json.get("model", "svm")
+        
+        # 1. Convert incoming JSON to the exact DataFrame expected by the models
+        df = prepare_patient_data(patient_json)
+        
+        # 2. Run inference (this scales the data internally)
+        results = run_prediction(df, model_type)
+        
+        return results
+    except Exception as e:
+        return {"error": str(e)}
 
 @app.get("/health")
 async def health():
     return {"status": "ok"}
 
-
 @app.get("/models")
 async def get_models():
     return {"models": ["logistic", "tree", "svm"]}
-
-
-#TODO: make api To get the graphs for the three models
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#TODO: make api To predict the heart disease
-#TODO: make api To predict the heart disease
-#TODO: make api To predict the heart disease
-
-
-
-# @app.post("/predict")
-# async def predict_heart_disease(patient_json: dict):
-#     # 1. Convert incoming JSON to a DataFrame
-#     raw_df = pd.DataFrame([patient_json])
-    
-#     # 2. Call the functions from your restructured script[cite: 1]
-#     cleaned_df = clean_patient_data(raw_df)
-#     capped_df = cap_outliers(cleaned_df)
-    
-#     # 3. Scale numerical columns[cite: 1]
-#     numerical_cols = ['Age', 'BP', 'Cholesterol', 'Max HR', 'ST depression']
-#     capped_df[numerical_cols] = scaler.transform(capped_df[numerical_cols])
-    
-#     # 4. Predict![cite: 1]
-#     prediction = model.predict(capped_df)
-#     probability = model.predict_proba(capped_df)[:, 1]
-    
-#     return {
-#         "prediction": int(prediction[0]),
-#         "probability": float(probability[0])
-#     }

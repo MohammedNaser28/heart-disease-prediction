@@ -16,11 +16,11 @@ def load_artifacts():
     global MODELS, SCALER
     
     try:
-        MODELS["logistic"] = joblib.load(os.path.join(ASSETS_DIR, 'logistic_regression.pkl'))
-        MODELS["tree"] = joblib.load(os.path.join(ASSETS_DIR, 'decision_tree.pkl'))
-        MODELS["svm"] = joblib.load(os.path.join(ASSETS_DIR, 'svm_model.pkl'))
+        MODELS["logistic"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'logistic_regression.pkl'))
+        MODELS["tree"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'decision_tree.pkl'))
+        MODELS["svm"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'svm_model.pkl'))
         
-        SCALER = joblib.load(os.path.join(ASSETS_DIR, 'scaler.pkl'))
+        SCALER = joblib.load(os.path.join(ASSETS_DIR, 'models', 'scaler.pkl'))
         print("✅ Models and Scaler successfully loaded into memory!")
     except FileNotFoundError as e:
         print(f"❌ Error loading artifacts: {e}")
@@ -35,12 +35,16 @@ def run_prediction(processed_df: pd.DataFrame, model_type: str):
     
     selected_model = MODELS[model_type]
     
+    if SCALER is None:
+        raise RuntimeError("Scaler is not loaded into memory.")
+        
+    scaled_features = SCALER.transform(processed_df)
 
-    prediction = int(selected_model.predict(processed_df)[0])
+    prediction = int(selected_model.predict(scaled_features)[0])
 
     probability = None
     if hasattr(selected_model, "predict_proba"):
-        probability = float(selected_model.predict_proba(processed_df)[0][1])
+        probability = float(selected_model.predict_proba(scaled_features)[0][1])
         
     return {
         "prediction": prediction,

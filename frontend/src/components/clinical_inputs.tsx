@@ -1,12 +1,7 @@
 import "../App.css"
+import { NumberField, RadioGroupField, SelectField } from '../lib/fields';
 
-interface ClinicalInputsProps {
-    values: any;
-    setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
-    handleChange: (e: React.ChangeEvent<any>) => void;
-}
-
-function ClinicalInputs({ values, setFieldValue, handleChange }: ClinicalInputsProps) {
+function ClinicalInputs() {
     return (
         <div className="form-section">
             <div className="form-section-header">
@@ -15,31 +10,81 @@ function ClinicalInputs({ values, setFieldValue, handleChange }: ClinicalInputsP
             </div>
             <div className="form-section-body">
                 <div className="field-row three">
-                    <div className="field">
-                        <label>BLOOD PRESSURE</label>
-                        <input type="number" name="bp" placeholder="mmHg" value={values.bp} onChange={handleChange} />
-                    </div>
-                    <div className="field">
-                        <label>CHOLESTEROL</label>
-                        <input type="number" name="cholesterol" placeholder="mg/dL" value={values.cholesterol} onChange={handleChange} />
-                    </div>
-                    <div className="field">
-                        <label>MAX HEART RATE</label>
-                        <input type="number" name="maxHr" placeholder="bpm" value={values.maxHr} onChange={handleChange} />
-                    </div>
+                    <NumberField label="BLOOD PRESSURE" name="bp" placeholder="mmHg" />
+                    <NumberField label="CHOLESTEROL" name="cholesterol" placeholder="mg/dL" />
+                    <NumberField label="MAX HEART RATE" name="maxHr" placeholder="bpm" />
                 </div>
                 <div className="field-row">
-                    <div className="field">
-                        <label>ST DEPRESSION</label>
-                        <input type="number" name="stDepression" placeholder="0.0" step="0.1" value={values.stDepression} onChange={handleChange} />
-                    </div>
-                    <div className="field">
-                        <label>FASTING BLOOD SUGAR</label>
-                        <div className="radio-group">
-                            <div className={`radio-opt ${values.fbs === 'Normal' ? 'sel' : ''}`} onClick={() => setFieldValue('fbs', 'Normal')}>Normal</div>
-                            <div className={`radio-opt ${values.fbs === '>120 mg/dL' ? 'sel' : ''}`} onClick={() => setFieldValue('fbs', '>120 mg/dL')}>&gt;120 mg/dL</div>
-                        </div>
-                    </div>
+                    <NumberField label="ST DEPRESSION" name="stDepression" placeholder="0.0" step="0.1" />
+                    <RadioGroupField
+                        label="FASTING BLOOD SUGAR"
+                        name="fbs"
+                        options={[
+                            { label: 'Normal', value: 'Normal' },
+                            { label: '>120 mg/dL', value: '>120 mg/dL' }
+                        ]}
+                    />
+                </div>
+                <div className="field-row">
+                    <SelectField
+                        label="CHEST PAIN TYPE"
+                        name="chestPainType"
+                        options={[
+                            { label: 'Type 1', value: '1' },
+                            { label: 'Type 2', value: '2' },
+                            { label: 'Type 3', value: '3' },
+                            { label: 'Type 4', value: '4' }
+                        ]}
+                    />
+                    <SelectField
+                        label="EKG RESULTS"
+                        name="ekgResults"
+                        options={[
+                            { label: 'Normal (0)', value: '0' },
+                            { label: 'Abnormality (1)', value: '1' },
+                            { label: 'Hypertrophy (2)', value: '2' }
+                        ]}
+                    />
+                </div>
+                <div className="field-row">
+                    <RadioGroupField
+                        label="EXERCISE ANGINA"
+                        name="exerciseAngina"
+                        options={[
+                            { label: 'No', value: '0' },
+                            { label: 'Yes', value: '1' }
+                        ]}
+                    />
+                    <SelectField
+                        label="SLOPE OF ST"
+                        name="slopeOfSt"
+                        options={[
+                            { label: 'Upsloping (1)', value: '1' },
+                            { label: 'Flat (2)', value: '2' },
+                            { label: 'Downsloping (3)', value: '3' }
+                        ]}
+                    />
+                </div>
+                <div className="field-row">
+                    <SelectField
+                        label="VESSELS FLURO"
+                        name="numVesselsFluro"
+                        options={[
+                            { label: '0', value: '0' },
+                            { label: '1', value: '1' },
+                            { label: '2', value: '2' },
+                            { label: '3', value: '3' }
+                        ]}
+                    />
+                    <SelectField
+                        label="THALLIUM"
+                        name="thallium"
+                        options={[
+                            { label: 'Normal (3)', value: '3' },
+                            { label: 'Fixed Defect (6)', value: '6' },
+                            { label: 'Reversable Defect (7)', value: '7' }
+                        ]}
+                    />
                 </div>
             </div>
         </div>

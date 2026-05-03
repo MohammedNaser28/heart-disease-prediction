@@ -1,14 +1,32 @@
+version: '3.8'
+
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     volumes:
-      - ./backend/assets:/app/assets # Syncs your trained .pkl models
+      # 💥 THIS IS THE MAGIC LINE FOR THE BACKEND 💥
+      # It mounts your local 'backend' folder directly into the '/app' folder inside the container.
+      - ./backend:/app
+    # Ensure Uvicorn runs with the --reload flag
+    command: uvicorn api:app --host 0.0.0.0 --port 8000 --reload
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      # Use a development-specific Dockerfile (see below)
+      dockerfile: Dockerfile.dev
     ports:
-      - "3000:80"
-    depends_on:
-      - backend
+      - "3000:3000" # Vite's default port, or 5173 if you prefer
+    volumes:
+      # 💥 THIS IS THE MAGIC LINE FOR THE FRONTEND 💥
+      - ./frontend:/app
+      # This prevents your local node_modules from overriding the container's node_modules
+      - /app/node_modules
+    environment:
+      # Required for Vite/React hot-reloading in Docker
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
