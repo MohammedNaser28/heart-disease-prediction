@@ -69,7 +69,7 @@ export function PredictPage() {
                         <div className={`model-card ${values.model === 'svm' ? 'active' : ''}`} onClick={() => setFieldValue('model', 'svm')}>
                             <div className="model-card-name">SVM</div>
                             <div className="model-card-type">support vector</div>
-                            <div className="model-card-acc">80.4%</div>
+                            <div className="model-card-acc">83.8%</div>
                             <div className="model-card-acc-lbl">ACCURACY</div>
                         </div>
                         <div className={`model-card ${values.model === 'tree' ? 'active' : ''}`} onClick={() => setFieldValue('model', 'tree')}>
