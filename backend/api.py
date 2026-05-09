@@ -4,6 +4,8 @@ from fastapi.staticfiles import StaticFiles
 import os
 from core.processing import prepare_patient_data
 from core.inference import load_artifacts, run_prediction
+from core.advanced_processing import prepare_advanced_patient_data
+from core.advanced_inference import load_advanced_artifacts, run_advanced_prediction
 
 app = FastAPI()
 
@@ -24,6 +26,7 @@ app.mount("/graphs", StaticFiles(directory=GRAPHS_DIR), name="graphs")
 @app.on_event("startup")
 async def startup_event():
     load_artifacts()
+    load_advanced_artifacts()
 
 @app.post("/predict")
 async def predict_heart_disease(patient_json: dict):
@@ -36,6 +39,21 @@ async def predict_heart_disease(patient_json: dict):
         # 2. Run inference (this scales the data internally)
         results = run_prediction(df, model_type)
         print("results",results)
+        return results
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.post("/advanced-predict")
+async def advanced_predict(patient_json: dict):
+    try:
+        model_type = patient_json.get("model", "logistic")
+
+        # 1. Convert incoming JSON to the DataFrame expected by advanced models
+        df = prepare_advanced_patient_data(patient_json)
+
+        # 2. Run inference with risk factor analysis
+        results = run_advanced_prediction(df, model_type, patient_json)
+        print("advanced results", results)
         return results
     except Exception as e:
         return {"error": str(e)}

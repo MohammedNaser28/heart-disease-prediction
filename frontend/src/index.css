@@ -22,6 +22,12 @@
   --green-border: #b8e8cc;
   --blue: #1a4a8a;
   --blue-light: #f0f5fd;
+  --yellow: #d4a017;
+  --yellow-light: #fdf8e8;
+  --yellow-border: #f0d878;
+  --orange: #d35400;
+  --orange-light: #fdf2e9;
+  --orange-border: #f0b878;
   --mono: 'IBM Plex Mono', monospace;
   --sans: 'Sora', sans-serif;
 }
