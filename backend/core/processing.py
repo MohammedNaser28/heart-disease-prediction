@@ -2,14 +2,7 @@ import pandas as pd
 
 def prepare_patient_data(raw_json: dict) -> pd.DataFrame:
     """
-    Converts the frontend JSON payload into a DataFrame with exactly the 30 columns
-    expected by the trained models, in the exact order they were trained on.
-    
-    The training notebook one-hot encoded: smoking_status, work_type,
-    Chest pain type, Slope of ST, EKG results, and Thallium.
-    It also double-scaled the numerical features (Age, BP, Cholesterol, Max HR,
-    ST depression), so we must apply the first scaling step here before the
-    production scaler applies the second.
+    Converts the frontend JSON into a DataFrame with exactly the 30 columns
     """
     
     # Pre-scale numerical features to match the first StandardScaler pass
@@ -100,10 +93,7 @@ def prepare_patient_data(raw_json: dict) -> pd.DataFrame:
     elif work_type == 'children':
         data['work_type_children'] = [1]
         
-    # Create DataFrame with strictly enforced column order (must match training)
-    # pd.get_dummies keeps non-dummied columns in place, then APPENDS dummies
-    # at the end in the order of the columns= parameter from training:
-    # columns=['smoking_status', 'work_type', 'Chest pain type', 'Slope of ST', 'EKG results', 'Thallium']
+
     cols = [
         # Non-dummied columns (original order after drop 'id')
         'Age', 'Gender', 'BP', 'Cholesterol', 'FBS over 120',
