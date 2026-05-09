@@ -35,7 +35,7 @@ async def predict_heart_disease(patient_json: dict):
         
         # 2. Run inference (this scales the data internally)
         results = run_prediction(df, model_type)
-        
+        print("results",results)
         return results
     except Exception as e:
         return {"error": str(e)}

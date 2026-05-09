@@ -19,12 +19,16 @@ def load_artifacts():
         MODELS["logistic"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'logistic_regression.pkl'))
         MODELS["tree"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'decision_tree.pkl'))
         MODELS["svm"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'svm_model.pkl'))
-        MODELS["random_forest"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'random_forest.pkl'))
+        MODELS["random_forest"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'rf_model.pkl'))
         MODELS["knn"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'knn_model.pkl'))
         MODELS["gboost"] = joblib.load(os.path.join(ASSETS_DIR, 'models', 'gb_model.pkl'))
 
         SCALER = joblib.load(os.path.join(ASSETS_DIR, 'models', 'scaler.pkl'))
         print("✅ Models and Scaler successfully loaded into memory!")
+        try:
+            print("📋 Scaler expects these columns (in order):", list(SCALER.feature_names_in_))
+        except AttributeError:
+            print("⚠️ Scaler does not have feature_names_in_")
     except FileNotFoundError as e:
         print(f"❌ Error loading artifacts: {e}")
         print("Make sure your .pkl files are in the backend/assets/ folder.")

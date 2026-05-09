@@ -51,6 +51,7 @@ export function PredictPage() {
     const handleSubmit = async (values: any) => {
         try {
             const response = await axios.post('http://localhost:8000/predict', values);
+            console.log(response.data);
             setPrediction(response.data);
         } catch (error) {
             console.error("Error running prediction", error);
@@ -109,7 +110,17 @@ export function PredictPage() {
 
                     <RunButton type="submit">RUN PREDICTION</RunButton>
 
-                    {prediction && (
+                    {prediction && prediction.error ? (
+                        <div className="result-panel high-risk">
+                            <div className="result-header">
+                                <div className="result-icon">❌</div>
+                                <div className="result-title">ERROR DETECTED</div>
+                            </div>
+                            <div className="result-body" style={{ padding: '0 20px 20px', color: '#ffaaaa' }}>
+                                {prediction.error}
+                            </div>
+                        </div>
+                    ) : prediction && (
                         <div className={`result-panel ${prediction.prediction === 1 ? 'high-risk' : 'low-risk'}`}>
                             <div className="result-header">
                                 <div className="result-icon">
@@ -120,7 +131,7 @@ export function PredictPage() {
                                 </div>
                             </div>
                             <div className="result-body">
-                                {prediction.probability !== null ? (
+                                {prediction.probability !== null && prediction.probability !== undefined ? (
                                     <div className="prob-container">
                                         <div className="prob-label">
                                             <span>Confidence Score</span>
@@ -135,7 +146,7 @@ export function PredictPage() {
                                     </div>
                                 ) : (
                                     <div className="prob-null">
-                                        <em>SVM model provides binary classification without probability scores.</em>
+                                        <em>Model provides binary classification without probability scores.</em>
                                     </div>
                                 )}
                             </div>

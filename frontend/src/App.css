@@ -301,6 +301,7 @@
   border-radius: 12px;
   overflow: hidden;
   background: var(--card);
+  padding: 2rem;
 }
 
 .result-hero {
