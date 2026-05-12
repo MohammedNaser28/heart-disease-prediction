@@ -15,7 +15,7 @@ services:
     staticPublishPath: ./frontend/dist
     envVars:
       - key: VITE_API_URL
-        value: https://heart-disease-prediction-api.onrender.com
+        value: https://heart-disease-prediction-api-uiz2.onrender.com
     routes:
       - type: rewrite
         source: /*
