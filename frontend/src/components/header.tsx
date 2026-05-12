@@ -13,7 +13,7 @@ function Header() {
                     </div>
                 </div>
                 
-                <div style={{ display: 'flex', gap: '30px' }}>
+                <div className="topbar-nav">
                     <Link to="/" style={{ color: 'var(--text-main)', textDecoration: 'none', fontWeight: 500, fontSize: '15px' }}>Prediction</Link>
                     <Link to="/advanced-predict" style={{ color: 'var(--text-main)', textDecoration: 'none', fontWeight: 500, fontSize: '15px' }}>Advanced</Link>
                     <Link to="/analytics" style={{ color: 'var(--text-main)', textDecoration: 'none', fontWeight: 500, fontSize: '15px' }}>Analytics</Link>

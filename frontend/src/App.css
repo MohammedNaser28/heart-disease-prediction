@@ -58,6 +58,12 @@
   background: #27ae60;
 }
 
+.topbar-nav {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
 .body {
   padding: 24px;
   display: flex;
@@ -975,6 +981,16 @@
     padding: 14px 16px 12px;
     flex-wrap: wrap;
     gap: 10px;
+    justify-content: space-between;
+  }
+
+  .topbar-nav {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    gap: 28px;
+    padding: 8px 0 4px;
+    border-top: 1px solid var(--border);
   }
 
   .api-status {
