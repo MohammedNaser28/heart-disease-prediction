@@ -8,7 +8,8 @@ services:
     plan: free
 
   # ── Frontend — React Static Site (always free, no plan field needed) ──
-  - type: static
+  - type: web
+    runtime: static
     name: heart-disease-prediction-frontend
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/dist
