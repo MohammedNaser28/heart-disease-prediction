@@ -112,44 +112,40 @@ export function PredictPage() {
                     <RunButton type="submit">RUN PREDICTION</RunButton>
 
                     {prediction && prediction.error ? (
-                        <div className="result-panel high-risk">
-                            <div className="result-header">
-                                <div className="result-icon">❌</div>
-                                <div className="result-title">ERROR DETECTED</div>
-                            </div>
-                            <div className="result-body" style={{ padding: '0 20px 20px', color: '#ffaaaa' }}>
-                                {prediction.error}
-                            </div>
+                        <div className="result-card result-card--error">
+                            <div className="result-card__icon">❌</div>
+                            <div className="result-card__title">Something went wrong</div>
+                            <div className="result-card__desc">{prediction.error}</div>
                         </div>
                     ) : prediction && (
-                        <div className={`result-panel ${prediction.prediction === 1 ? 'high-risk' : 'low-risk'}`}>
-                            <div className="result-header">
-                                <div className="result-icon">
-                                    {prediction.prediction === 1 ? '⚠️' : '✅'}
-                                </div>
-                                <div className="result-title">
-                                    {prediction.prediction === 1 ? 'HIGH RISK DETECTED' : 'LOW RISK'}
-                                </div>
+                        <div className={`result-card ${prediction.prediction === 1 ? 'result-card--danger' : 'result-card--safe'}`}>
+                            <div className="result-card__icon">
+                                {prediction.prediction === 1 ? '🫀' : '💚'}
                             </div>
-                            <div className="result-body">
-                                {prediction.probability !== null && prediction.probability !== undefined ? (
-                                    <div className="prob-container">
-                                        <div className="prob-label">
-                                            <span>Confidence Score</span>
-                                            <span>{(prediction.probability * 100).toFixed(1)}%</span>
-                                        </div>
-                                        <div className="prob-bar-bg">
-                                            <div
-                                                className="prob-bar-fill"
-                                                style={{ width: `${prediction.probability * 100}%` }}
-                                            ></div>
-                                        </div>
+                            <div className="result-card__title">
+                                {prediction.prediction === 1 ? 'Heart Disease Risk Detected' : 'No Heart Disease Detected'}
+                            </div>
+                            <div className="result-card__desc">
+                                {prediction.prediction === 1
+                                    ? 'The selected model indicates a potential risk of heart disease based on the provided clinical data.'
+                                    : 'Based on the provided clinical data, the selected model finds no significant indicators of heart disease.'}
+                            </div>
+                            {prediction.probability != null && (
+                                <div className="result-card__prob">
+                                    <div className="result-card__prob-header">
+                                        <span className="result-card__prob-label">MODEL CONFIDENCE</span>
+                                        <span className="result-card__prob-val">{(prediction.probability * 100).toFixed(1)}%</span>
                                     </div>
-                                ) : (
-                                    <div className="prob-null">
-                                        <em>Model provides binary classification without probability scores.</em>
+                                    <div className="result-card__prob-track">
+                                        <div
+                                            className="result-card__prob-fill"
+                                            style={{ width: `${prediction.probability * 100}%` }}
+                                        />
                                     </div>
-                                )}
+                                </div>
+                            )}
+                            <div className="result-card__disclaimer">
+                                ⚕️ For educational use only — not a substitute for professional medical advice.
                             </div>
                         </div>
                     )}

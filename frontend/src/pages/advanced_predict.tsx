@@ -73,18 +73,6 @@ export function AdvancedPredictPage() {
         }
     };
 
-    const getGaugeClass = (prob: number) => {
-        if (prob < 0.3) return 'safe';
-        if (prob < 0.5) return 'borderline';
-        return 'danger';
-    };
-
-    const getPanelClass = (result: AdvancedPrediction) => {
-        if (result.error) return 'high-risk';
-        if (result.prediction === 1) return 'high-risk';
-        if (result.risk_level === 'borderline') return 'borderline';
-        return 'low-risk';
-    };
 
     return (
         <Formik
@@ -139,132 +127,96 @@ export function AdvancedPredictPage() {
 
                     {/* Error State */}
                     {prediction && prediction.error ? (
-                        <div className="result-panel high-risk">
-                            <div className="result-header">
-                                <div className="result-icon">❌</div>
-                                <div className="result-title">ERROR DETECTED</div>
-                            </div>
-                            <div className="result-body" style={{ padding: '0 20px 20px', color: '#ffaaaa' }}>
-                                {prediction.error}
-                            </div>
+                        <div className="result-card result-card--error">
+                            <div className="result-card__icon">❌</div>
+                            <div className="result-card__title">Something went wrong</div>
+                            <div className="result-card__desc">{prediction.error}</div>
                         </div>
 
-                    /* Disease Detected */
                     ) : prediction && prediction.prediction === 1 ? (
-                        <div className={`result-panel ${getPanelClass(prediction)}`}>
-                            <div className="result-header">
-                                <div className="result-icon">🫀</div>
-                                <div className="result-title">HEART DISEASE DETECTED</div>
+                        /* Heart Disease Detected */
+                        <div className="result-card result-card--danger">
+                            <div className="result-card__icon">🫀</div>
+                            <div className="result-card__title">Heart Disease Risk Detected</div>
+                            <div className="result-card__desc">
+                                The model has identified clinical markers associated with heart disease. Please consult a healthcare professional for proper evaluation.
                             </div>
-                            <div className="result-body">
-                                {prediction.probability !== null && prediction.probability !== undefined && (
-                                    <div className="prob-container">
-                                        <div className="prob-label">
-                                            <span>Confidence</span>
-                                            <span>{(prediction.probability * 100).toFixed(1)}%</span>
-                                        </div>
-                                        <div className="prob-bar-bg">
-                                            <div
-                                                className="prob-bar-fill"
-                                                style={{ width: `${prediction.probability * 100}%`, background: 'var(--red)' }}
-                                            ></div>
-                                        </div>
+                            {prediction.probability != null && (
+                                <div className="result-card__prob">
+                                    <div className="result-card__prob-header">
+                                        <span className="result-card__prob-label">MODEL CONFIDENCE</span>
+                                        <span className="result-card__prob-val">{(prediction.probability * 100).toFixed(1)}%</span>
                                     </div>
-                                )}
-
-                                {/* Advice Cards */}
-                                {prediction.risk_factors && prediction.risk_factors.length > 0 && (
-                                    <div className="advice-section">
-                                        <div className="advice-section-title">
-                                            <span>📋</span> RECOMMENDATIONS
-                                        </div>
-                                        {prediction.risk_factors.map((rf, i) => (
-                                            <div className="advice-card" key={i}>
-                                                <div className="advice-card-header">
-                                                    <div className="advice-card-factor">{rf.factor}</div>
-                                                    <div className="advice-card-value">{rf.value}</div>
-                                                </div>
-                                                <div className="advice-card-text">{rf.advice}</div>
-                                            </div>
-                                        ))}
+                                    <div className="result-card__prob-track">
+                                        <div className="result-card__prob-fill result-card__prob-fill--danger"
+                                            style={{ width: `${prediction.probability * 100}%` }} />
                                     </div>
-                                )}
-
-                                <div className="disclaimer">
-                                    <span className="disclaimer-icon">⚕️</span>
-                                    <span>This is not a substitute for professional medical advice. Please consult a qualified healthcare provider for diagnosis and treatment.</span>
                                 </div>
+                            )}
+                            {prediction.risk_factors && prediction.risk_factors.length > 0 && (
+                                <div className="advice-section" style={{ width: '100%', textAlign: 'left' }}>
+                                    <div className="advice-section-title"><span>📋</span> RECOMMENDATIONS</div>
+                                    {prediction.risk_factors.map((rf, i) => (
+                                        <div className="advice-card" key={i}>
+                                            <div className="advice-card-header">
+                                                <div className="advice-card-factor">{rf.factor}</div>
+                                                <div className="advice-card-value">{rf.value}</div>
+                                            </div>
+                                            <div className="advice-card-text">{rf.advice}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            <div className="result-card__disclaimer">
+                                ⚕️ Not a substitute for professional medical advice. Consult a qualified healthcare provider.
                             </div>
                         </div>
 
-                    /* No Disease — but maybe near */
                     ) : prediction && (
-                        <div className={`result-panel ${getPanelClass(prediction)}`}>
-                            <div className="result-header">
-                                <div className="result-icon">
-                                    {prediction.risk_level === 'borderline' ? '⚡' : '✅'}
-                                </div>
-                                <div className="result-title">
-                                    {prediction.risk_level === 'borderline'
-                                        ? 'YOU ARE NEAR TO HEART DISEASE'
-                                        : 'NO HEART DISEASE DETECTED'}
-                                </div>
+                        /* No Disease */
+                        <div className={`result-card ${prediction.risk_level === 'borderline' ? 'result-card--warn' : 'result-card--safe'}`}>
+                            <div className="result-card__icon">
+                                {prediction.risk_level === 'borderline' ? '⚡' : '💚'}
                             </div>
-                            <div className="result-body">
-                                {prediction.probability !== null && prediction.probability !== undefined ? (
-                                    <div className="risk-gauge-container">
-                                        <div className="risk-gauge-header">
-                                            <div className="risk-gauge-title">DISEASE PROXIMITY</div>
-                                            <div className={`risk-gauge-value ${getGaugeClass(prediction.probability)}`}>
-                                                {(prediction.probability * 100).toFixed(1)}%
-                                            </div>
-                                        </div>
-                                        <div className="risk-gauge-track">
-                                            <div
-                                                className={`risk-gauge-fill ${getGaugeClass(prediction.probability)}`}
-                                                style={{ width: `${prediction.probability * 100}%` }}
-                                            ></div>
-                                        </div>
-                                        <div className="risk-gauge-zones">
-                                            <span className="risk-gauge-zone">0% SAFE</span>
-                                            <span className="risk-gauge-zone">30%</span>
-                                            <span className="risk-gauge-zone">50% DANGER</span>
-                                        </div>
-
-                                        {prediction.risk_level === 'borderline' ? (
-                                            <div className="risk-message borderline">
-                                                ⚡ You are close to developing heart disease. Consider lifestyle changes — regular exercise, balanced diet, and routine cardiac checkups can help prevent progression.
-                                            </div>
-                                        ) : (
-                                            <div className="risk-message safe">
-                                                ✅ You do not have heart disease. Keep maintaining a healthy lifestyle with regular physical activity and balanced nutrition.
-                                            </div>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <div className="prob-null">
-                                        <em>Model provides binary classification without probability scores.</em>
-                                    </div>
-                                )}
-
-                                {/* Show advice even if no disease but risk factors exist */}
-                                {prediction.risk_factors && prediction.risk_factors.length > 0 && (
-                                    <div className="advice-section">
-                                        <div className="advice-section-title">
-                                            <span>💡</span> AREAS TO WATCH
-                                        </div>
-                                        {prediction.risk_factors.map((rf, i) => (
-                                            <div className="advice-card" key={i}>
-                                                <div className="advice-card-header">
-                                                    <div className="advice-card-factor">{rf.factor}</div>
-                                                    <div className="advice-card-value">{rf.value}</div>
-                                                </div>
-                                                <div className="advice-card-text">{rf.advice}</div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
+                            <div className="result-card__title">
+                                {prediction.risk_level === 'borderline' ? 'Borderline Risk — Stay Alert' : 'No Heart Disease Detected'}
                             </div>
+                            <div className="result-card__desc">
+                                {prediction.risk_level === 'borderline'
+                                    ? 'You are near the risk threshold. Consider lifestyle improvements — regular exercise, balanced diet, and cardiac checkups.'
+                                    : 'Your clinical data shows no significant indicators of heart disease. Keep up the healthy lifestyle!'}
+                            </div>
+                            {prediction.probability != null && (
+                                <div className="result-card__prob">
+                                    <div className="result-card__prob-header">
+                                        <span className="result-card__prob-label">DISEASE PROXIMITY</span>
+                                        <span className="result-card__prob-val">{(prediction.probability * 100).toFixed(1)}%</span>
+                                    </div>
+                                    <div className="result-card__prob-track">
+                                        <div
+                                            className={`result-card__prob-fill ${prediction.risk_level === 'borderline' ? 'result-card__prob-fill--warn' : ''}`}
+                                            style={{ width: `${prediction.probability * 100}%` }}
+                                        />
+                                    </div>
+                                    <div className="result-card__prob-zones">
+                                        <span>SAFE</span><span>30%</span><span>50% RISK</span>
+                                    </div>
+                                </div>
+                            )}
+                            {prediction.risk_factors && prediction.risk_factors.length > 0 && (
+                                <div className="advice-section" style={{ width: '100%', textAlign: 'left' }}>
+                                    <div className="advice-section-title"><span>💡</span> AREAS TO WATCH</div>
+                                    {prediction.risk_factors.map((rf, i) => (
+                                        <div className="advice-card" key={i}>
+                                            <div className="advice-card-header">
+                                                <div className="advice-card-factor">{rf.factor}</div>
+                                                <div className="advice-card-value">{rf.value}</div>
+                                            </div>
+                                            <div className="advice-card-text">{rf.advice}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     )}
                 </Form>
