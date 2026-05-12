@@ -7,13 +7,11 @@ services:
     dockerContext: ./backend
     plan: free
 
-  # ── Frontend — React Static Site ─────────────────────────────
-  - type: web
+  # ── Frontend — React Static Site (always free, no plan field needed) ──
+  - type: static
     name: heart-disease-prediction-frontend
-    runtime: static
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/dist
-    plan: free
     envVars:
       - key: VITE_API_URL
         value: https://heart-disease-prediction-api.onrender.com
