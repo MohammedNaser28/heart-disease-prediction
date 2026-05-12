@@ -3,6 +3,7 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import '../App.css';
+import API_BASE_URL from '../config';
 import PatientInputs from "../components/patient_inputs.tsx";
 import ClinicalInputs from "../components/clinical_inputs.tsx";
 import { RunButton } from '../lib/buttons.tsx';
@@ -50,7 +51,7 @@ export function PredictPage() {
 
     const handleSubmit = async (values: any) => {
         try {
-            const response = await axios.post('/api/predict', values);
+            const response = await axios.post(`${API_BASE_URL}/predict`, values);
             console.log(response.data);
             setPrediction(response.data);
         } catch (error) {
