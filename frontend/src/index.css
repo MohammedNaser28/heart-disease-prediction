@@ -32,8 +32,34 @@
   --sans: 'Sora', sans-serif;
 }
 
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111010;
+  --card: #1c1b19;
+  --border: #2d2b28;
+  --border-strong: #3d3b38;
+  --text: #ede9e3;
+  --muted: #7a7670;
+  --hint: #4a4844;
+  --red: #e05545;
+  --red-light: #2a1514;
+  --red-border: #4a2220;
+  --green: #2db867;
+  --green-light: #0f2018;
+  --green-border: #1a4028;
+  --blue: #4a8ae0;
+  --blue-light: #0f1a28;
+  --yellow: #e8b830;
+  --yellow-light: #281e08;
+  --yellow-border: #483a10;
+  --orange: #e07038;
+  --orange-light: #281608;
+  --orange-border: #482810;
+}
+
 body {
   background: var(--bg);
   font-family: var(--sans);
   color: var(--text);
+  transition: background 0.25s, color 0.25s;
 }

@@ -826,6 +826,52 @@
   background: var(--card);
 }
 
+/* ─── Dark Mode Toggle Button ────────────────────────────────── */
+
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px 9px;
+  line-height: 1;
+  transition: border-color 0.15s, background 0.15s;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  border-color: var(--border-strong);
+  background: var(--bg);
+}
+
+/* ─── Dark Mode — Component Overrides ────────────────────────── */
+
+/* Smooth transition for all cards and borders */
+.topbar,
+.model-card,
+.form-section,
+.result-card,
+.advice-card,
+.plot-card,
+.dataset-card {
+  transition: background 0.25s, border-color 0.25s;
+}
+
+/* Result card gradients need dark-specific versions since they use hardcoded hex */
+[data-theme="dark"] .result-card--danger {
+  background: linear-gradient(160deg, #2a1010 0%, var(--card) 60%);
+}
+
+[data-theme="dark"] .result-card--safe {
+  background: linear-gradient(160deg, #0c1f14 0%, var(--card) 60%);
+}
+
+[data-theme="dark"] .result-card--warn {
+  background: linear-gradient(160deg, #201a08 0%, var(--card) 60%);
+}
+
 /* ─── Result Card (New Unified Design) ──────────────────────── */
 
 @keyframes slideUp {
