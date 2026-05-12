@@ -1,0 +1,66 @@
+{
+  "high_bp": {
+    "factor": "Blood Pressure",
+    "field": "bp",
+    "compare": "gte",
+    "threshold": 140,
+    "unit": "mmHg",
+    "advice": "Your blood pressure is above the normal range (< 140 mmHg). Consult a doctor about lifestyle changes or antihypertensive medication."
+  },
+  "high_cholesterol": {
+    "factor": "Cholesterol",
+    "field": "cholesterol",
+    "compare": "gte",
+    "threshold": 240,
+    "unit": "mg/dL",
+    "advice": "Your cholesterol exceeds the recommended level (< 240 mg/dL). Consider dietary changes, regular exercise, and consult about statin therapy."
+  },
+  "high_fbs": {
+    "factor": "Fasting Blood Sugar",
+    "field": "fbs",
+    "compare": "eq",
+    "threshold": ">120 mg/dL",
+    "unit": "mg/dL",
+    "advice": "Elevated fasting blood sugar may indicate pre-diabetes or diabetes. Regular monitoring and dietary adjustments are recommended."
+  },
+  "low_max_hr": {
+    "factor": "Max Heart Rate",
+    "field": "maxHr",
+    "compare": "lte",
+    "threshold": 120,
+    "unit": "bpm",
+    "advice": "A low maximum heart rate during exercise may indicate reduced cardiovascular fitness. Gradual aerobic exercise programs can help improve this."
+  },
+  "high_st_depression": {
+    "factor": "ST Depression",
+    "field": "stDepression",
+    "compare": "gte",
+    "threshold": 2.0,
+    "unit": "mm",
+    "advice": "Significant ST depression suggests possible myocardial ischemia. Further cardiac evaluation such as stress testing is recommended."
+  },
+  "exercise_angina": {
+    "factor": "Exercise-Induced Angina",
+    "field": "exerciseAngina",
+    "compare": "eq",
+    "threshold": "1",
+    "unit": null,
+    "advice": "Chest pain during exercise is a significant warning sign. Avoid strenuous activity until you consult a cardiologist."
+  },
+  "smoking": {
+    "factor": "Smoking Status",
+    "field": "smokingStatus",
+    "compare": "eq",
+    "threshold": "smokes",
+    "unit": null,
+    "advice": "Smoking significantly increases cardiovascular risk. Quitting smoking is the single most impactful step you can take for heart health."
+  },
+  "elderly_age": {
+    "factor": "Age",
+    "field": "age",
+    "compare": "gte",
+    "threshold": 55,
+    "unit": "years",
+    "advice": "Age is a non-modifiable risk factor. Regular cardiac check-ups become increasingly important after age 55."
+  }
+}

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CardioPredict</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Sora:wght@300;400;500;600&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f7f6f3;
+  --card: #ffffff;
+  --border: #e4e2dd;
+  --border-strong: #c8c5be;
+  --text: #1a1917;
+  --muted: #8a8680;
+  --hint: #b8b4ae;
+  --red: #c0392b;
+  --red-light: #fdf1f0;
+  --red-border: #f5c6c2;
+  --green: #1a7a4a;
+  --green-light: #f0faf4;
+  --green-border: #b8e8cc;
+  --blue: #1a4a8a;
+  --blue-light: #f0f5fd;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Sora', sans-serif;
+}
+
+body { background: var(--bg); font-family: var(--sans); color: var(--text); }
+
+.shell { max-width: 780px; margin: 0 auto; padding: 0 0 40px; }
+
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+  position: sticky; top: 0; z-index: 10;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--red); }
+.brand-name { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
+.brand-sub { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 1px; }
+
+.api-status { display: flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.api-dot { width: 6px; height: 6px; border-radius: 50%; background: #27ae60; }
+
+.body { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+
+.model-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+.model-card {
+  border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
+  cursor: pointer; background: var(--card);
+  transition: border-color 0.15s, background 0.15s; text-align: left;
+}
+.model-card:hover { border-color: var(--border-strong); }
+.model-card.active { border-color: var(--red); background: var(--red-light); }
+.model-card-name { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+.model-card-type { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.model-card-acc { margin-top: 10px; font-family: var(--mono); font-size: 18px; font-weight: 600; color: var(--text); }
+.model-card.active .model-card-acc { color: var(--red); }
+.model-card-acc-lbl { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.06em; }
+
+.form-section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.form-section-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.step-num {
+  width: 22px; height: 22px; border-radius: 50%; background: var(--text); color: var(--card);
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.form-section-title { font-size: 12px; font-weight: 500; letter-spacing: 0.01em; }
+.form-section-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.field-row.three { grid-template-columns: 1fr 1fr 1fr; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field.full { grid-column: 1/-1; }
+.field label { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.07em; }
+
+.field input, .field select {
+  height: 40px; border: 1px solid var(--border); border-radius: 8px;
+  padding: 0 12px; font-size: 13px; font-family: var(--sans);
+  color: var(--text); background: var(--bg); outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  appearance: none; -webkit-appearance: none; width: 100%;
+}
+.field input:focus, .field select:focus { border-color: var(--border-strong); background: var(--card); }
+.field input::placeholder { color: var(--hint); }
+
+.select-wrap { position: relative; }
+.select-wrap::after {
+  content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  width: 0; height: 0; border-left: 4px solid transparent;
+  border-right: 4px solid transparent; border-top: 5px solid var(--muted); pointer-events: none;
+}
+.select-wrap select { padding-right: 28px; cursor: pointer; }
+
+.radio-group { display: flex; gap: 8px; }
+.radio-opt {
+  flex: 1; border: 1px solid var(--border); border-radius: 8px;
+  padding: 9px 12px; cursor: pointer; font-size: 12px; font-weight: 400;
+  color: var(--muted); background: var(--bg); text-align: center;
+  transition: all 0.12s; user-select: none;
+}
+.radio-opt:hover { border-color: var(--border-strong); color: var(--text); }
+.radio-opt.sel { border-color: var(--text); background: var(--text); color: var(--card); font-weight: 500; }
+
+.run-btn {
+  width: 100%; height: 46px; background: var(--text); color: var(--card);
+  border: none; border-radius: 10px; font-family: var(--mono); font-size: 12px;
+  font-weight: 600; letter-spacing: 0.08em; cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.run-btn:hover { background: #2d2b28; }
+.run-btn:active { transform: scale(0.99); }
+
+.result-panel { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--card); }
+.result-hero { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 20px; }
+
+.risk-badge { padding: 6px 14px; border-radius: 6px; font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; }
+.risk-badge.low { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+.risk-badge.high { background: var(--red-light); color: var(--red); border: 1px solid var(--red-border); }
+
+.result-main-val { font-size: 32px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; }
+.result-main-val.low { color: var(--green); }
+.result-main-val.high { color: var(--red); }
+.result-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+.conf-section { margin-left: auto; text-align: right; }
+.conf-val { font-family: var(--mono); font-size: 20px; font-weight: 600; }
+.conf-lbl { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
+.conf-track { height: 3px; width: 120px; margin-left: auto; margin-top: 6px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.conf-fill { height: 100%; border-radius: 2px; background: var(--blue); transition: width 0.4s; }
+
+.metrics-bar { display: grid; grid-template-columns: repeat(4, 1fr); }
+.metric-cell { padding: 16px 20px; border-right: 1px solid var(--border); }
+.metric-cell:last-child { border-right: none; }
+.metric-cell-val { font-family: var(--mono); font-size: 17px; font-weight: 600; }
+.metric-cell-lbl { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.07em; margin-top: 3px; }
+
+.plots-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.plot-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+.plot-title { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.07em; margin-bottom: 14px; }
+
+.feat-row { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+.feat-lbl { font-size: 11px; color: var(--muted); width: 76px; flex-shrink: 0; }
+.feat-track { flex: 1; height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; }
+.feat-fill { height: 100%; border-radius: 2px; background: var(--text); }
+.feat-val { font-family: var(--mono); font-size: 10px; color: var(--muted); width: 32px; flex-shrink: 0; text-align: right; }
+
+.cm-labels-row { display: flex; gap: 4px; margin-bottom: 2px; padding-left: 44px; }
+.cm-col-lbl { flex: 1; text-align: center; font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.06em; }
+.cm-row { display: flex; align-items: center; gap: 4px; }
+.cm-row-lbl { font-family: var(--mono); font-size: 9px; color: var(--muted); width: 40px; flex-shrink: 0; letter-spacing: 0.04em; }
+.cm-cell { flex: 1; height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 14px; font-weight: 600; }
+.cm-cell.tp { background: var(--green-light); color: var(--green); }
+.cm-cell.tn { background: var(--green-light); color: var(--green); }
+.cm-cell.fp { background: var(--red-light); color: var(--red); }
+.cm-cell.fn { background: var(--red-light); color: var(--red); }
+
+.dataset-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.dataset-header { padding: 12px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.dataset-title { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.07em; }
+.dataset-badge { font-family: var(--mono); font-size: 9px; background: var(--bg); border: 1px solid var(--border); padding: 2px 8px; border-radius: 4px; color: var(--muted); }
+.dataset-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.dataset-table th { font-family: var(--mono); font-size: 9px; color: var(--hint); letter-spacing: 0.06em; text-align: left; padding: 8px 18px; border-bottom: 1px solid var(--border); font-weight: 400; }
+.dataset-table td { font-size: 12px; padding: 9px 18px; border-bottom: 1px solid #f2f0ec; color: var(--text); }
+.dataset-table tr:last-child td { border-bottom: none; }
+.target-yes { font-family: var(--mono); font-size: 10px; background: var(--red-light); color: var(--red); padding: 2px 8px; border-radius: 4px; border: 1px solid var(--red-border); }
+.target-no  { font-family: var(--mono); font-size: 10px; background: var(--green-light); color: var(--green); padding: 2px 8px; border-radius: 4px; border: 1px solid var(--green-border); }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-dot"></div>
+      <div>
+        <div class="brand-name">CardioPredict</div>
+        <div class="brand-sub">heart disease prediction</div>
+      </div>
+    </div>
+    <div class="api-status">
+      <div class="api-dot"></div>
+      FastAPI · /predict
+    </div>
+  </div>
+
+  <div class="body">
+
+    <div class="model-strip">
+      <div class="model-card active" data-key="svm" onclick="pickModel(this)">
+        <div class="model-card-name">SVM</div>
+        <div class="model-card-type">support vector</div>
+        <div class="model-card-acc">85%</div>
+        <div class="model-card-acc-lbl">ACCURACY</div>
+      </div>
+      <div class="model-card" data-key="dt" onclick="pickModel(this)">
+        <div class="model-card-name">Decision Tree</div>
+        <div class="model-card-type">tree-based</div>
+        <div class="model-card-acc">80%</div>
+        <div class="model-card-acc-lbl">ACCURACY</div>
+      </div>
+      <div class="model-card" data-key="lr" onclick="pickModel(this)">
+        <div class="model-card-name">Logistic Reg.</div>
+        <div class="model-card-type">linear</div>
+        <div class="model-card-acc">82%</div>
+        <div class="model-card-acc-lbl">ACCURACY</div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-header">
+        <div class="step-num">1</div>
+        <div class="form-section-title">Patient demographics</div>
+      </div>
+      <div class="form-section-body">
+        <div class="field-row">
+          <div class="field">
+            <label>AGE</label>
+            <input type="number" placeholder="e.g. 54" min="1" max="120" />
+          </div>
+          <div class="field">
+            <label>GENDER</label>
+            <div class="radio-group">
+              <div class="radio-opt sel" onclick="toggleRadio(this, 'gender')">Male</div>
+              <div class="radio-opt" onclick="toggleRadio(this, 'gender')">Female</div>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>WORK TYPE</label>
+          <div class="select-wrap">
+            <select>
+              <option value="">Select work type</option>
+              <option>Private</option>
+              <option>Self-employed</option>
+              <option>Government job</option>
+              <option>Children</option>
+              <option>Never worked</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>SMOKING STATUS</label>
+          <div class="radio-group">
+            <div class="radio-opt sel" onclick="toggleRadio(this, 'smoke')">Never smoked</div>
+            <div class="radio-opt" onclick="toggleRadio(this, 'smoke')">Formerly smoked</div>
+            <div class="radio-opt" onclick="toggleRadio(this, 'smoke')">Smokes</div>
+            <div class="radio-opt" onclick="toggleRadio(this, 'smoke')">Unknown</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-header">
+        <div class="step-num">2</div>
+        <div class="form-section-title">Clinical measurements</div>
+      </div>
+      <div class="form-section-body">
+        <div class="field-row three">
+          <div class="field">
+            <label>BLOOD PRESSURE</label>
+            <input type="number" placeholder="mmHg" />
+          </div>
+          <div class="field">
+            <label>CHOLESTEROL</label>
+            <input type="number" placeholder="mg/dL" />
+          </div>
+          <div class="field">
+            <label>MAX HEART RATE</label>
+            <input type="number" placeholder="bpm" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>ST DEPRESSION</label>
+            <input type="number" placeholder="0.0" step="0.1" />
+          </div>
+          <div class="field">
+            <label>FASTING BLOOD SUGAR</label>
+            <div class="radio-group">
+              <div class="radio-opt sel" onclick="toggleRadio(this, 'fbs')">Normal</div>
+              <div class="radio-opt" onclick="toggleRadio(this, 'fbs')">&gt;120 mg/dL</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="run-btn" onclick="runPred()">RUN PREDICTION</button>
+
+    <div class="result-panel" id="resultPanel">
+      <div class="result-hero">
+        <div>
+          <div class="risk-badge low" id="riskBadge">LOW RISK</div>
+          <div class="result-main-val low" id="riskVal" style="margin-top:10px;">No Disease</div>
+          <div class="result-sub" id="riskSub">Prediction by SVM — joblib model</div>
+        </div>
+        <div class="conf-section">
+          <div class="conf-val" id="confVal">72%</div>
+          <div class="conf-lbl">CONFIDENCE</div>
+          <div class="conf-track"><div class="conf-fill" id="confFill" style="width:72%"></div></div>
+        </div>
+      </div>
+      <div class="metrics-bar">
+        <div class="metric-cell"><div class="metric-cell-val" id="mAcc">85%</div><div class="metric-cell-lbl">ACCURACY</div></div>
+        <div class="metric-cell"><div class="metric-cell-val" id="mPrec">83%</div><div class="metric-cell-lbl">PRECISION</div></div>
+        <div class="metric-cell"><div class="metric-cell-val" id="mRec">87%</div><div class="metric-cell-lbl">RECALL</div></div>
+        <div class="metric-cell"><div class="metric-cell-val" id="mF1">0.85</div><div class="metric-cell-lbl">F1 SCORE</div></div>
+      </div>
+    </div>
+
+    <div class="plots-row">
+      <div class="plot-card">
+        <div class="plot-title">FEATURE IMPORTANCE</div>
+        <div class="feat-row"><div class="feat-lbl">Chest pain</div><div class="feat-track"><div class="feat-fill" style="width:90%"></div></div><div class="feat-val">0.90</div></div>
+        <div class="feat-row"><div class="feat-lbl">Max HR</div><div class="feat-track"><div class="feat-fill" style="width:74%"></div></div><div class="feat-val">0.74</div></div>
+        <div class="feat-row"><div class="feat-lbl">ST depress.</div><div class="feat-track"><div class="feat-fill" style="width:66%"></div></div><div class="feat-val">0.66</div></div>
+        <div class="feat-row"><div class="feat-lbl">Cholesterol</div><div class="feat-track"><div class="feat-fill" style="width:51%"></div></div><div class="feat-val">0.51</div></div>
+        <div class="feat-row"><div class="feat-lbl">Age</div><div class="feat-track"><div class="feat-fill" style="width:44%"></div></div><div class="feat-val">0.44</div></div>
+        <div class="feat-row"><div class="feat-lbl">BP</div><div class="feat-track"><div class="feat-fill" style="width:35%"></div></div><div class="feat-val">0.35</div></div>
+        <div class="feat-row"><div class="feat-lbl">Smoking</div><div class="feat-track"><div class="feat-fill" style="width:28%"></div></div><div class="feat-val">0.28</div></div>
+      </div>
+
+      <div class="plot-card">
+        <div class="plot-title">CONFUSION MATRIX</div>
+        <div class="cm-labels-row">
+          <div class="cm-col-lbl">PRED NO</div>
+          <div class="cm-col-lbl">PRED YES</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div class="cm-row">
+            <div class="cm-row-lbl">ACTUAL NO</div>
+            <div class="cm-cell tn" id="cm-tn">142</div>
+            <div class="cm-cell fp" id="cm-fp">18</div>
+          </div>
+          <div class="cm-row">
+            <div class="cm-row-lbl">ACTUAL YES</div>
+            <div class="cm-cell fn" id="cm-fn">21</div>
+            <div class="cm-cell tp" id="cm-tp">137</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dataset-card">
+      <div class="dataset-header">
+        <div class="dataset-title">df.head() — train_data.csv</div>
+        <div class="dataset-badge">5 rows shown</div>
+      </div>
+      <table class="dataset-table">
+        <thead>
+          <tr>
+            <th>Age</th><th>Gender</th><th>BP</th><th>Cholesterol</th><th>Max HR</th><th>Smoking</th><th>Heart Disease</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>67</td><td>Male</td><td>160</td><td>286</td><td>108</td><td>Never smoked</td><td><span class="target-yes">Yes</span></td></tr>
+          <tr><td>52</td><td>Male</td><td>112</td><td>230</td><td>160</td><td>Formerly smoked</td><td><span class="target-no">No</span></td></tr>
+          <tr><td>63</td><td>Female</td><td>130</td><td>254</td><td>147</td><td>Smokes</td><td><span class="target-yes">Yes</span></td></tr>
+          <tr><td>47</td><td>Male</td><td>108</td><td>243</td><td>152</td><td>Never smoked</td><td><span class="target-no">No</span></td></tr>
+          <tr><td>55</td><td>Female</td><td>135</td><td>217</td><td>165</td><td>Unknown</td><td><span class="target-no">No</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const modelData = {
+  svm: { name: 'SVM',           acc: '85%', prec: '83%', rec: '87%', f1: '0.85', tn:142, fp:18, fn:21, tp:137 },
+  dt:  { name: 'Decision Tree', acc: '80%', prec: '78%', rec: '82%', f1: '0.80', tn:134, fp:26, fn:28, tp:130 },
+  lr:  { name: 'Logistic Reg.', acc: '82%', prec: '79%', rec: '85%', f1: '0.82', tn:138, fp:22, fn:24, tp:134 },
+};
+let activeModel = 'svm';
+
+function pickModel(el) {
+  document.querySelectorAll('.model-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  activeModel = el.dataset.key;
+  const m = modelData[activeModel];
+  document.getElementById('mAcc').textContent = m.acc;
+  document.getElementById('mPrec').textContent = m.prec;
+  document.getElementById('mRec').textContent = m.rec;
+  document.getElementById('mF1').textContent = m.f1;
+  document.getElementById('cm-tn').textContent = m.tn;
+  document.getElementById('cm-fp').textContent = m.fp;
+  document.getElementById('cm-fn').textContent = m.fn;
+  document.getElementById('cm-tp').textContent = m.tp;
+  document.getElementById('riskSub').textContent = 'Prediction by ' + m.name + ' — joblib model';
+}
+
+function toggleRadio(el, group) {
+  el.closest('.radio-group').querySelectorAll('.radio-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function runPred() {
+  const outcomes = [
+    { label: 'No Disease', cls: 'low', badge: 'LOW RISK', conf: 71 },
+    { label: 'Heart Disease', cls: 'high', badge: 'HIGH RISK', conf: 79 },
+  ];
+  const o = outcomes[Math.round(Math.random())];
+  const c = o.conf + Math.round(Math.random() * 10 - 5);
+  document.getElementById('riskVal').textContent = o.label;
+  document.getElementById('riskVal').className = 'result-main-val ' + o.cls;
+  const badge = document.getElementById('riskBadge');
+  badge.textContent = o.badge;
+  badge.className = 'risk-badge ' + o.cls;
+  document.getElementById('confVal').textContent = c + '%';
+  document.getElementById('confFill').style.width = c + '%';
+}
+</script>
+</body>
+</html>

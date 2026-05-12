@@ -1,0 +1,23 @@
+services:
+  # ── Backend — FastAPI Docker Web Service ─────────────────────
+  - type: web
+    name: heart-disease-prediction-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+
+  # ── Frontend — React Static Site ─────────────────────────────
+  - type: web
+    name: heart-disease-prediction-frontend
+    runtime: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    plan: free
+    envVars:
+      - key: VITE_API_URL
+        value: https://heart-disease-prediction-api.onrender.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
