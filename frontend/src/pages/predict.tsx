@@ -50,7 +50,7 @@ export function PredictPage() {
 
     const handleSubmit = async (values: any) => {
         try {
-            const response = await axios.post('http://localhost:8000/predict', values);
+            const response = await axios.post('/api/predict', values);
             console.log(response.data);
             setPrediction(response.data);
         } catch (error) {

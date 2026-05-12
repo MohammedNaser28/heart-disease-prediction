@@ -64,7 +64,7 @@ export function AdvancedPredictPage() {
 
     const handleSubmit = async (values: any) => {
         try {
-            const response = await axios.post('http://localhost:8000/advanced-predict', values);
+            const response = await axios.post('/api/advanced-predict', values);
             console.log(response.data);
             setPrediction(response.data);
         } catch (error) {

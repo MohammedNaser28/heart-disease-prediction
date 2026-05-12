@@ -16,6 +16,9 @@ RUN npm run build
 # Stage 2: Serve the app with Nginx
 FROM nginx:stable-alpine
 
+# Use our custom Nginx config (serves static files + proxies /api/* to backend)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # Copy the built files from the previous stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
