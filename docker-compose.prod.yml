@@ -5,7 +5,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    # Backend is NOT exposed publicly — only accessible inside Docker network
     expose:
       - "8000"
     restart: unless-stopped
